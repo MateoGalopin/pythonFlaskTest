@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>humeur</title>
+    <script>
+        url = 'http://10.50.6.110:5000/';
+        url_add  = url + 'add_humeur';
+        url_list = url + 'list_humeur';
+        url_raz  = url + 'raz';
+
+        function razList() {
+            url = url_raz;
+            fetch(url).catch(error => console.error('Error:', error));
+        }
+
+        function addHumeur() {
+            humeur = document.getElementById('saisie_humeur').value;
+            pseudo = document.getElementById('saisie_pseudo').value;
+            url = url_add + '/' + pseudo + '/' + humeur;
+            fetch(url).catch(error => console.error('Error:', error));
+        }
+
+        function showHumeur() {
+            fetch(url_list)
+                .then(response => {
+                    // Vérifier si la requête a réussi
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    // Convertir la réponse en JSON
+                    return response.json();
+                })
+                .then(data => {
+                    console.log( data );
+                    affichage = document.getElementById('affiche')
+                    list_humeurs = data['humeurs']
+                    chaine_affiche = '';
+                    list_humeurs.forEach((x) => { chaine_affiche = chaine_affiche + '<br>' + x['pseudo'] + '&nbsp:&nbsp' + x['humeur']; });
+
+                    //execute le JS 
+                    //affichage.innerHTML = chaine_affiche;
+
+                    // affiche le texte brut
+                    affichage.textContent = chaine_affiche;
+
+                    console.log(list_humeurs);
+                })
+                .catch(error => {
+                    // Gérer les erreurs éventuelles
+                    console.error('There has been a problem with your fetch operation:', error);
+                });
+        }
+    </script>
+</head>
+
+<body>
+    <h1>humeur:</h1>
+    <input type='text' id='saisie_pseudo'>
+    <input type='text' id='saisie_humeur'>
+    <button type='button' onclick="addHumeur()">add</button>
+    <button type='button' onclick="showHumeur()">list</button>
+    <button type='button' onclick="razList()">RAZ</button>
+    <br>
+    <div id="affiche"></div>
+</body>
+
+</html>
